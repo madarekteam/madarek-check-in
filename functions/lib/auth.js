@@ -1,63 +1,81 @@
 
-const encoder = new TextEncoder();
+const COOKIE_NAME = "madarek_session";
+const SESSION_DURATION = 8 * 60 * 60;
 
-function toBase64Url(bytes) {
-  return btoa(String.fromCharCode(...new Uint8Array(bytes)))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-function fromBase64Url(value) {
-  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
-  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
-}
-
-async function sign(value, secret) {
+async function hmac(value, secret) {
   const key = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(secret),
+    new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
   );
 
-  return toBase64Url(
-    await crypto.subtle.sign("HMAC", key, encoder.encode(value))
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(value)
   );
+
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
-export async function verifyOrganizerSession(request, env) {
-  const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(/(?:^|;\s*)madarek_session=([^;]+)/);
+async function safeEqual(a, b) {
+  const encoder = new TextEncoder();
 
-  if (!match || !env.ORGANIZER_SESSION_SECRET) return false;
+  const x = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", encoder.encode(a))
+  );
 
-  const parts = match[1].split(".");
-  if (parts.length !== 2) return false;
-
-  const [timestamp, signature] = parts;
-  if (!/^\d+$/.test(timestamp)) return false;
-
-  const issuedAt = Number(timestamp);
-  const now = Date.now();
-
-  if (!Number.isSafeInteger(issuedAt)) return false;
-  if (issuedAt > now + 60000) return false;
-  if (now - issuedAt > 8 * 60 * 60 * 1000) return false;
-
-  const expected = await sign(timestamp, env.ORGANIZER_SESSION_SECRET);
-
-  if (signature.length !== expected.length) return false;
-
-  const a = encoder.encode(signature);
-  const b = encoder.encode(expected);
+  const y = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", encoder.encode(b))
+  );
 
   let difference = 0;
-  for (let i = 0; i < a.length; i++) {
-    difference |= a[i] ^ b[i];
+
+  for (let i = 0; i < x.length; i++) {
+    difference |= x[i] ^ y[i];
   }
 
   return difference === 0;
+}
+
+export async function verifyOrganizerSession(request, env) {
+  if (!env.ORGANIZER_SESSION_SECRET) return false;
+
+  const cookies = request.headers.get("Cookie") || "";
+  const item = cookies.split(";")
+    .map(v => v.trim())
+    .find(v => v.startsWith(COOKIE_NAME + "="));
+
+  if (!item) return false;
+
+  const token = item.slice(COOKIE_NAME.length + 1);
+  const parts = token.split(".");
+
+  if (parts.length !== 2) return false;
+
+  const [timestamp, signature] = parts;
+
+  if (!/^\d+$/.test(timestamp)) return false;
+
+  const issuedAt = Number(timestamp);
+  const now = Math.floor(Date.now() / 1000);
+
+  if (
+    !Number.isSafeInteger(issuedAt) ||
+    issuedAt > now ||
+    now - issuedAt > SESSION_DURATION
+  ) {
+    return false;
+  }
+
+  const expected = await hmac(
+    timestamp,
+    env.ORGANIZER_SESSION_SECRET
+  );
+
+  return safeEqual(signature, expected);
 }
