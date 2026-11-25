@@ -2,255 +2,612 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دخول المنظمين | مدارِّك</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام الحضور | مدارِّك</title>
 
-  <style>
-    :root {
-      --paper: #f3f0e8;
-      --ink: #17191c;
-      --blue: #174de8;
-      --muted: #777a80;
-      --line: #dedbd2;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --paper:#f3f0e8;
+  --ink:#17191c;
+  --blue:#174de8;
+  --muted:#777a80;
+  --line:#dedbd2;
+  --green:#176b42;
+  --red:#a33;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
+* { box-sizing:border-box; }
 
-    .container {
-      width: 100%;
-      max-width: 390px;
-      text-align: center;
-    }
+body {
+  margin:0;
+  min-height:100vh;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans Arabic',sans-serif;
+  padding:30px 18px;
+}
 
-    .logo {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 12px;
-      background: var(--blue);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 25px;
-      font-weight: 600;
-    }
+.container {
+  width:100%;
+  max-width:480px;
+  margin:auto;
+}
 
-    .brand {
-      font-size: 23px;
-      font-weight: 700;
-    }
+header {
+  text-align:center;
+  margin-bottom:30px;
+}
 
-    .tagline {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 3px;
-    }
+.logo {
+  width:48px;
+  height:48px;
+  margin:0 auto 10px;
+  background:var(--blue);
+  color:white;
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  font-weight:600;
+}
 
-    .card {
-      margin-top: 36px;
-      padding: 30px 24px;
-      background: rgba(255,255,255,.55);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      text-align: right;
-    }
+.brand { font-size:23px;font-weight:700; }
+.tagline { color:var(--muted);font-size:13px;margin-top:3px; }
 
-    h1 {
-      font-size: 21px;
-      margin: 0 0 8px;
-    }
+.card {
+  background:rgba(255,255,255,.55);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:25px 22px;
+  margin-bottom:18px;
+}
 
-    .description {
-      color: var(--muted);
-      font-size: 14px;
-      margin: 0 0 25px;
-    }
+h1 { font-size:21px;margin:0 0 8px; }
+h2 { font-size:18px;margin:0 0 15px; }
 
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
+.description {
+  color:var(--muted);
+  font-size:14px;
+  margin:0 0 24px;
+  line-height:1.8;
+}
 
-    input {
-      width: 100%;
-      padding: 13px 14px;
-      margin-bottom: 19px;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: #fff;
-      font: inherit;
-      outline: none;
-      direction: rtl;
-    }
+label {
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:8px;
+}
 
-    input:focus {
-      border-color: var(--blue);
-    }
+input {
+  width:100%;
+  padding:13px;
+  margin-bottom:18px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:white;
+  font:inherit;
+  outline:none;
+}
 
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 7px;
-      padding: 13px;
-      background: var(--blue);
-      color: white;
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
+input:focus { border-color:var(--blue); }
 
-    button:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
+button {
+  width:100%;
+  border:0;
+  border-radius:7px;
+  padding:13px;
+  background:var(--blue);
+  color:white;
+  font:inherit;
+  font-weight:600;
+  cursor:pointer;
+}
 
-    .message {
-      display: none;
-      font-size: 13px;
-      margin-top: 15px;
-      text-align: center;
-      line-height: 1.7;
-    }
+button:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
 
-    .message.error {
-      color: #a33;
-    }
+.secondary {
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--ink);
+}
 
-    .message.success {
-      color: #176b42;
-    }
+.danger {
+  background:transparent;
+  border:1px solid #d8baba;
+  color:var(--red);
+}
 
-    footer {
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-  </style>
+.message {
+  display:none;
+  font-size:13px;
+  margin-top:14px;
+  text-align:center;
+  line-height:1.8;
+}
+
+.message.error { color:var(--red); }
+.message.success { color:var(--green); }
+
+#dashboard, #studentCard { display:none; }
+
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.topbar button {
+  width:auto;
+  padding:9px 15px;
+  font-size:13px;
+}
+
+#reader {
+  width:100%;
+  overflow:hidden;
+  border-radius:9px;
+  background:white;
+}
+
+#reader video {
+  border-radius:9px;
+}
+
+#scanMessage {
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  margin-top:14px;
+  line-height:1.8;
+}
+
+.student-row {
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+
+.student-row:last-child { border-bottom:0; }
+
+.student-row span:first-child { color:var(--muted); }
+
+.student-row strong {
+  text-align:left;
+  overflow-wrap:anywhere;
+}
+
+#confirmButton { margin-top:20px; }
+
+.status {
+  padding:13px;
+  border-radius:7px;
+  font-size:14px;
+  text-align:center;
+  line-height:1.8;
+  margin-top:15px;
+  display:none;
+}
+
+.status.success {
+  display:block;
+  color:var(--green);
+  background:#e8f2eb;
+}
+
+.status.error {
+  display:block;
+  color:var(--red);
+  background:#f8eaea;
+}
+
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:25px;
+}
+
+.hidden { display:none !important; }
+
+</style>
 </head>
 
 <body>
-  <main class="container">
-    <div class="logo">م</div>
-    <div class="brand">مدارِّك</div>
-    <div class="tagline">معرفة تتجاوز المألوف</div>
+<main class="container">
 
-    <section class="card">
-      <h1>دخول المنظمين</h1>
-      <p class="description">يرجى تسجيل الدخول للمتابعة إلى نظام الحضور.</p>
+<header>
+  <div class="logo">م</div>
+  <div class="brand">مدارِّك</div>
+  <div class="tagline">معرفة تتجاوز المألوف</div>
+</header>
 
-      <form id="loginForm">
-        <label for="username">اسم المستخدم</label>
-        <input id="username" type="text" autocomplete="username" required>
+<!-- تسجيل الدخول -->
+<section class="card" id="loginSection">
+  <h1>دخول المنظمين</h1>
+  <p class="description">يرجى تسجيل الدخول للمتابعة إلى نظام الحضور.</p>
 
-        <label for="password">كلمة المرور</label>
-        <input id="password" type="password" autocomplete="current-password" required>
+  <form id="loginForm">
+    <label for="username">اسم المستخدم</label>
+    <input id="username" type="text" autocomplete="username" required>
 
-        <button id="loginButton" type="submit">تسجيل الدخول</button>
-        <p class="message" id="message" role="status" aria-live="polite"></p>
-      </form>
-    </section>
+    <label for="password">كلمة المرور</label>
+    <input id="password" type="password" autocomplete="current-password" required>
 
-    <footer>مدارك © 2026</footer>
-  </main>
+    <button id="loginButton" type="submit">تسجيل الدخول</button>
+    <p class="message" id="loginMessage" role="status"></p>
+  </form>
+</section>
 
-  <script>
-    const form = document.getElementById('loginForm');
-    const button = document.getElementById('loginButton');
-    const message = document.getElementById('message');
+<!-- لوحة المنظم -->
+<section id="dashboard">
 
-    function showMessage(text, type) {
-      message.textContent = text;
-      message.className = 'message ' + type;
-      message.style.display = 'block';
-    }
+  <div class="topbar">
+    <strong>لوحة الحضور</strong>
+    <button class="danger" id="logoutButton">تسجيل الخروج</button>
+  </div>
 
-    async function checkSession() {
-      try {
-        const response = await fetch('/api/login', {
-          method: 'GET',
-          credentials: 'same-origin',
-          cache: 'no-store'
-        });
+  <section class="card">
+    <h1>مسح رمز QR</h1>
+    <p class="description">
+      وجّه كاميرا الجهاز نحو رمز QR الموجود في تذكرة الطالب للتحقق من تسجيله.
+    </p>
 
-        if (!response.ok) return;
+    <div id="reader"></div>
 
-        const data = await response.json();
+    <p id="scanMessage">
+      اضغط الزر أدناه لتشغيل الكاميرا.
+    </p>
 
-        if (data.authenticated) {
-          showMessage(
-            'أنت مسجل الدخول بنجاح. سيتم تجهيز لوحة الحضور في الخطوة التالية.',
-            'success'
-          );
-        }
-      } catch (error) {
-        console.error('Session check failed');
-      }
-    }
+    <button id="startButton" type="button">تشغيل الكاميرا</button>
+    <button id="stopButton" type="button" class="secondary hidden" style="margin-top:10px">
+      إيقاف الكاميرا
+    </button>
+  </section>
 
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
+  <!-- بيانات الطالب -->
+  <section class="card" id="studentCard">
+    <h2>بيانات التذكرة</h2>
 
-      button.disabled = true;
-      button.textContent = 'جارٍ التحقق...';
-      message.style.display = 'none';
+    <div class="student-row">
+      <span>اسم الطالب</span>
+      <strong id="studentName">—</strong>
+    </div>
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+    <div class="student-row">
+      <span>الصف</span>
+      <strong id="studentGrade">—</strong>
+    </div>
 
-      try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
+    <div class="student-row">
+      <span>الفصل</span>
+      <strong id="studentClass">—</strong>
+    </div>
 
-        const data = await response.json();
+    <div class="student-row">
+      <span>رقم المقعد</span>
+      <strong id="studentSeat">—</strong>
+    </div>
 
-        if (!response.ok || !data.success) {
-          showMessage(
-            data.error || 'تعذر تسجيل الدخول. حاول مرة أخرى.',
-            'error'
-          );
-          return;
-        }
+    <div class="student-row">
+      <span>رقم التذكرة</span>
+      <strong id="ticketCode">—</strong>
+    </div>
 
-        form.reset();
+    <div id="attendanceStatus" class="status"></div>
 
-        showMessage(
-          'تم تسجيل الدخول بنجاح. سيتم تجهيز لوحة الحضور في الخطوة التالية.',
-          'success'
-        );
+    <button id="confirmButton" type="button">
+      تأكيد الحضور
+    </button>
 
-      } catch (error) {
-        showMessage(
-          'تعذر الاتصال بالخادم. تحقق من اتصال الإنترنت وحاول مجددًا.',
-          'error'
-        );
-      } finally {
-        button.disabled = false;
-        button.textContent = 'تسجيل الدخول';
-      }
+    <button id="scanAgainButton" type="button" class="secondary" style="margin-top:10px">
+      مسح تذكرة أخرى
+    </button>
+  </section>
+
+</section>
+
+<footer>مدارك © 2026</footer>
+</main>
+
+<script>
+const loginSection = document.getElementById("loginSection");
+const dashboard = document.getElementById("dashboard");
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const loginMessage = document.getElementById("loginMessage");
+
+const readerElement = document.getElementById("reader");
+const startButton = document.getElementById("startButton");
+const stopButton = document.getElementById("stopButton");
+const scanMessage = document.getElementById("scanMessage");
+
+const studentCard = document.getElementById("studentCard");
+const confirmButton = document.getElementById("confirmButton");
+const attendanceStatus = document.getElementById("attendanceStatus");
+
+let scanner = null;
+let scannerRunning = false;
+let currentTicketId = null;
+let currentStudent = null;
+let requestInProgress = false;
+
+function showMessage(element, text, type) {
+  element.textContent = text;
+  element.className = "message " + type;
+  element.style.display = "block";
+}
+
+function showDashboard() {
+  loginSection.style.display = "none";
+  dashboard.style.display = "block";
+}
+
+function showLogin() {
+  dashboard.style.display = "none";
+  loginSection.style.display = "block";
+}
+
+async function checkSession() {
+  try {
+    const response = await fetch("/api/login", {
+      credentials:"same-origin",
+      cache:"no-store"
     });
 
-    checkSession();
-  </script>
+    if (response.status === 401) {
+      showLogin();
+      return;
+    }
+
+    if (!response.ok) throw new Error();
+
+    const data = await response.json();
+
+    if (data.authenticated) {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+  } catch {
+    showMessage(loginMessage, "تعذر التحقق من جلسة الدخول.", "error");
+  }
+}
+
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  loginButton.disabled = true;
+  loginButton.textContent = "جارٍ التحقق...";
+  loginMessage.style.display = "none";
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const response = await fetch("/api/login", {
+      method:"POST",
+      credentials:"same-origin",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      showMessage(loginMessage, data.error || "بيانات الدخول غير صحيحة.", "error");
+      return;
+    }
+
+    loginForm.reset();
+    showDashboard();
+
+  } catch {
+    showMessage(loginMessage, "تعذر الاتصال بالخادم.", "error");
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "تسجيل الدخول";
+  }
+});
+
+async function attendanceRequest(action, ticketId) {
+  const response = await fetch("/api/attendance", {
+    method:"POST",
+    credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action,ticketId})
+  });
+
+  const result = await response.json();
+
+  if (response.status === 401) {
+    showDashboard();
+    throw new Error("انتهت جلسة الدخول. يرجى تسجيل الدخول مجددًا.");
+  }
+
+  return result;
+}
+
+async function startScanner() {
+  if (typeof Html5Qrcode === "undefined") {
+    scanMessage.textContent = "تعذر تحميل قارئ QR. تحقق من اتصال الإنترنت.";
+    return;
+  }
+
+  try {
+    if (!scanner) {
+      scanner = new Html5Qrcode("reader");
+    }
+
+    await scanner.start(
+      { facingMode:"environment" },
+      { fps:10, qrbox:{width:230,height:230} },
+      onScanSuccess,
+      () => {}
+    );
+
+    scannerRunning = true;
+    startButton.classList.add("hidden");
+    stopButton.classList.remove("hidden");
+    scanMessage.textContent = "الكاميرا تعمل. وجّهها نحو رمز QR.";
+
+  } catch (error) {
+    scanMessage.textContent = "تعذر تشغيل الكاميرا. تأكد من السماح باستخدام الكاميرا.";
+  }
+}
+
+async function stopScanner() {
+  if (scanner && scannerRunning) {
+    try {
+      await scanner.stop();
+      scannerRunning = false;
+    } catch {}
+  }
+
+  startButton.classList.remove("hidden");
+  stopButton.classList.add("hidden");
+}
+
+async function onScanSuccess(decodedText) {
+  if (requestInProgress || currentTicketId) return;
+
+  requestInProgress = true;
+  await stopScanner();
+
+  scanMessage.textContent = "جارٍ التحقق من التذكرة...";
+
+  try {
+    const result = await attendanceRequest(
+      "verifyAttendanceTicket",
+      decodedText.trim()
+    );
+
+    if (!result.ok || !result.student) {
+      scanMessage.textContent = result.message || "التذكرة غير صالحة.";
+      return;
+    }
+
+    currentTicketId = decodedText.trim();
+    currentStudent = result.student;
+
+    document.getElementById("studentName").textContent = currentStudent.name || "—";
+    document.getElementById("studentGrade").textContent = currentStudent.grade || "—";
+    document.getElementById("studentClass").textContent = currentStudent.classSection || "—";
+    document.getElementById("studentSeat").textContent = currentStudent.seat || "—";
+    document.getElementById("ticketCode").textContent = currentStudent.ticketCode || "—";
+
+    studentCard.style.display = "block";
+
+    if (currentStudent.status === "حضر") {
+      attendanceStatus.textContent = "هذا الطالب مسجل حضوره مسبقًا.";
+      attendanceStatus.className = "status success";
+      confirmButton.disabled = true;
+      confirmButton.textContent = "تم تسجيل الحضور مسبقًا";
+    } else {
+      attendanceStatus.style.display = "none";
+      confirmButton.disabled = false;
+      confirmButton.textContent = "تأكيد الحضور";
+    }
+
+    scanMessage.textContent = "تم التحقق من التذكرة.";
+
+  } catch (error) {
+    scanMessage.textContent = error.message || "حدث خطأ أثناء التحقق.";
+  } finally {
+    requestInProgress = false;
+  }
+}
+
+confirmButton.addEventListener("click", async () => {
+  if (!currentTicketId || requestInProgress) return;
+
+  requestInProgress = true;
+  confirmButton.disabled = true;
+  confirmButton.textContent = "جارٍ تأكيد الحضور...";
+
+  try {
+    const result = await attendanceRequest(
+      "confirmAttendance",
+      currentTicketId
+    );
+
+    if (!result.ok) {
+      attendanceStatus.textContent = result.message || "تعذر تأكيد الحضور.";
+      attendanceStatus.className = "status error";
+      confirmButton.disabled = false;
+      confirmButton.textContent = "إعادة المحاولة";
+      return;
+    }
+
+    if (result.alreadyAttended) {
+      attendanceStatus.textContent = "هذا الطالب مسجل حضوره مسبقًا.";
+    } else {
+      attendanceStatus.textContent = "تم تأكيد حضور الطالب بنجاح.";
+    }
+
+    attendanceStatus.className = "status success";
+    confirmButton.textContent = "تم تسجيل الحضور";
+    confirmButton.disabled = true;
+
+  } catch (error) {
+    attendanceStatus.textContent = error.message || "تعذر الاتصال بالخادم.";
+    attendanceStatus.className = "status error";
+    confirmButton.disabled = false;
+    confirmButton.textContent = "إعادة المحاولة";
+  } finally {
+    requestInProgress = false;
+  }
+});
+
+function resetStudentCard() {
+  currentTicketId = null;
+  currentStudent = null;
+
+  studentCard.style.display = "none";
+  attendanceStatus.style.display = "none";
+
+  confirmButton.disabled = false;
+  confirmButton.textContent = "تأكيد الحضور";
+
+  scanMessage.textContent = "يمكنك الآن مسح تذكرة أخرى.";
+}
+
+startButton.addEventListener("click", startScanner);
+stopButton.addEventListener("click", stopScanner);
+
+document.getElementById("scanAgainButton").addEventListener("click", async () => {
+  resetStudentCard();
+  await startScanner();
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  await stopScanner();
+
+  try {
+    await fetch("/api/login", {
+      method:"DELETE",
+      credentials:"same-origin"
+    });
+  } finally {
+    resetStudentCard();
+    showLogin();
+    loginMessage.style.display = "none";
+  }
+});
+
+checkSession();
+</script>
 </body>
 </html>
