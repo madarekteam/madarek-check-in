@@ -1,3 +1,5 @@
+
+import { isSameOrigin } from "../lib/csrf.js";
 const COOKIE_NAME = "madarek_session";
 const SESSION_DURATION = 8 * 60 * 60;
 
@@ -90,6 +92,13 @@ async function validSession(request, secret) {
 export async function onRequest(context) {
   const { request, env } = context;
 
+   if (
+  (request.method === "POST" || request.method === "DELETE") &&
+  !isSameOrigin(request)
+) {
+  return json({ error: "الطلب غير مصرح به." }, 403);
+} 
+  
   if (!env.ORGANIZER_USERNAME ||
       !env.ORGANIZER_PASSWORD ||
       !env.ORGANIZER_SESSION_SECRET) {
