@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -113,12 +114,25 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
     .message {
       display: none;
-      color: #a33;
       font-size: 13px;
       margin-top: 15px;
       text-align: center;
+      line-height: 1.7;
+    }
+
+    .message.error {
+      color: #a33;
+    }
+
+    .message.success {
+      color: #176b42;
     }
 
     footer {
@@ -146,8 +160,8 @@
         <label for="password">كلمة المرور</label>
         <input id="password" type="password" autocomplete="current-password" required>
 
-        <button type="submit">تسجيل الدخول</button>
-        <p class="message" id="message">لم يتم إعداد تسجيل الدخول بعد.</p>
+        <button id="loginButton" type="submit">تسجيل الدخول</button>
+        <p class="message" id="message" role="status" aria-live="polite"></p>
       </form>
     </section>
 
@@ -155,10 +169,88 @@
   </main>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
+    const form = document.getElementById('loginForm');
+    const button = document.getElementById('loginButton');
+    const message = document.getElementById('message');
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = 'message ' + type;
+      message.style.display = 'block';
+    }
+
+    async function checkSession() {
+      try {
+        const response = await fetch('/api/login', {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (data.authenticated) {
+          showMessage(
+            'أنت مسجل الدخول بنجاح. سيتم تجهيز لوحة الحضور في الخطوة التالية.',
+            'success'
+          );
+        }
+      } catch (error) {
+        console.error('Session check failed');
+      }
+    }
+
+    form.addEventListener('submit', async function(event) {
       event.preventDefault();
-      document.getElementById('message').style.display = 'block';
+
+      button.disabled = true;
+      button.textContent = 'جارٍ التحقق...';
+      message.style.display = 'none';
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          showMessage(
+            data.error || 'تعذر تسجيل الدخول. حاول مرة أخرى.',
+            'error'
+          );
+          return;
+        }
+
+        form.reset();
+
+        showMessage(
+          'تم تسجيل الدخول بنجاح. سيتم تجهيز لوحة الحضور في الخطوة التالية.',
+          'success'
+        );
+
+      } catch (error) {
+        showMessage(
+          'تعذر الاتصال بالخادم. تحقق من اتصال الإنترنت وحاول مجددًا.',
+          'error'
+        );
+      } finally {
+        button.disabled = false;
+        button.textContent = 'تسجيل الدخول';
+      }
     });
+
+    checkSession();
   </script>
 </body>
 </html>
