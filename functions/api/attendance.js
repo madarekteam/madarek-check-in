@@ -1,4 +1,5 @@
 
+import { isSameOrigin } from "../lib/csrf.js";
 import { verifyOrganizerSession } from "../lib/auth.js";
 
 export async function onRequest(context) {
@@ -15,6 +16,13 @@ export async function onRequest(context) {
   if (request.method !== "POST") {
     return respond({ ok: false, message: "Method not allowed" }, 405);
   }
+
+  if (!isSameOrigin(request)) {
+  return respond({
+    ok: false,
+    message: "الطلب غير مصرح به."
+  }, 403);
+}
 
   const authenticated = await verifyOrganizerSession(request, env);
 
