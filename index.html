@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f0e8">
+  <title>مدارك | نظام الحضور</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f3f0e8;
+      --ink: #17191c;
+      --blue: #174de8;
+      --muted: #777873;
+      --line: #dedbd2;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "IBM Plex Sans Arabic", sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(100% - 40px, 900px);
+      margin: auto;
+    }
+
+    header {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      font-size: 27px;
+      font-weight: 700;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    main {
+      padding: 55px 0;
+      min-height: calc(100vh - 145px);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .student-message {
+      max-width: 460px;
+      margin: 65px auto;
+      text-align: center;
+    }
+
+    .shield {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 25px;
+      border: 1px solid #cbd4f4;
+      color: var(--blue);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 27px;
+    }
+
+    h1 {
+      font-size: clamp(25px, 5vw, 34px);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 2;
+    }
+
+    .organizer-panel {
+      max-width: 550px;
+      margin: 25px auto;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .panel-description {
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.9;
+      font-size: 14px;
+    }
+
+    .scan-box {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .scan-icon {
+      color: var(--blue);
+      font-size: 45px;
+    }
+
+    .scan-box p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .student-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 23px;
+      margin-top: 22px;
+    }
+
+    .student-card h2 {
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+
+    .field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eeeeea;
+      font-size: 14px;
+    }
+
+    .field:last-child {
+      border: none;
+    }
+
+    .field span {
+      color: var(--muted);
+    }
+
+    .status {
+      color: #21834b;
+      background: #e8f5ec;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .primary-button {
+      width: 100%;
+      border: none;
+      background: var(--blue);
+      color: white;
+      padding: 15px;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 22px;
+      cursor: pointer;
+    }
+
+    .login-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 25px;
+      margin-top: 25px;
+    }
+
+    .login-card label {
+      display: block;
+      font-size: 14px;
+      margin: 16px 0 8px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+
+    .login-card input:focus {
+      border-color: var(--blue);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 22px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 35px 0;
+      }
+
+      .student-message {
+        margin: 55px auto;
+      }
+
+      .tagline {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <div class="brand">
+        <div class="logo">م</div>
+        <div class="brand-name">مدارِّك</div>
+      </div>
+      <div class="tagline">معرفة تتجاوز المألوف</div>
+    </header>
+
+    <main>
+
+      <!-- صفحة الطالب -->
+      <section class="page active" id="studentPage">
+        <div class="student-message">
+          <div class="shield">✓</div>
+          <h1>رمز مخصص للمنظمين</h1>
+          <p class="description">
+            يرجى عرض رمز QR على أحد المنظمين لتأكيد حضورك.
+            <br>
+            لا يمكن تسجيل الحضور بشكل ذاتي.
+          </p>
+        </div>
+      </section>
+
+      <!-- صفحة تسجيل دخول المنظم -->
+      <section class="page" id="loginPage">
+        <div class="organizer-panel">
+          <div class="eyebrow">فريق مدارك</div>
+          <h1>تسجيل دخول المنظمين</h1>
+          <p class="panel-description">
+            يرجى تسجيل الدخول للوصول إلى نظام التحقق من التذاكر والحضور.
+          </p>
+
+          <div class="login-card">
+            <label for="username">اسم المستخدم</label>
+            <input id="username" type="text" placeholder="اسم المستخدم">
+
+            <label for="password">كلمة المرور</label>
+            <input id="password" type="password" placeholder="كلمة المرور">
+
+            <button class="primary-button" type="button">
+              تسجيل الدخول
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- لوحة المنظم -->
+      <section class="page" id="organizerPage">
+        <div class="organizer-panel">
+          <div class="eyebrow">فريق مدارك</div>
+          <h1>التحقق من الحضور</h1>
+          <p class="panel-description">
+            امسح رمز QR الموجود على تذكرة الطالب للتحقق من تسجيله.
+          </p>
+
+          <div class="scan-box">
+            <div class="scan-icon">▦</div>
+            <strong>جاهز للمسح</strong>
+            <p>ستظهر هنا أداة مسح رموز QR بعد ربط النظام.</p>
+          </div>
+
+          <div class="student-card">
+            <h2>بيانات الطالب</h2>
+
+            <div class="field">
+              <span>اسم الطالب</span>
+              <strong>—</strong>
+            </div>
+
+            <div class="field">
+              <span>الصف</span>
+              <strong>—</strong>
+            </div>
+
+            <div class="field">
+              <span>رقم المقعد</span>
+              <strong>—</strong>
+            </div>
+
+            <div class="field">
+              <span>حالة التذكرة</span>
+              <strong class="status">بانتظار التحقق</strong>
+            </div>
+
+            <button class="primary-button" type="button" disabled>
+              تأكيد الحضور
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      مدارك © 2026
+    </footer>
+
+  </div>
+</body>
+</html>
