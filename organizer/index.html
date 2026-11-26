@@ -489,17 +489,39 @@ async function onScanSuccess(decodedText) {
   scanMessage.textContent = "جارٍ التحقق من التذكرة...";
 
   try {
-    const result = await attendanceRequest(
-      "verifyAttendanceTicket",
-      decodedText.trim()
-    );
+   let ticketId = decodedText.trim();
+
+try {
+  const scannedUrl = new URL(ticketId);
+
+  if (scannedUrl.hostname !== "madarek-check-in.pages.dev") {
+    throw new Error("رابط غير معتمد.");
+  }
+
+  ticketId = scannedUrl.searchParams.get("ticket");
+
+  if (!ticketId) {
+    throw new Error("الرابط لا يحتوي على معرّف التذكرة.");
+  }
+} catch (error) {
+  if (error instanceof TypeError) {
+    ticketId = decodedText.trim();
+  } else {
+    throw error;
+  }
+}
+
+const result = await attendanceRequest(
+  "verifyAttendanceTicket",
+  ticketId
+);
 
     if (!result.ok || !result.student) {
       scanMessage.textContent = result.message || "التذكرة غير صالحة.";
       return;
     }
 
-    currentTicketId = decodedText.trim();
+    currentTicketId = ticketId;
     currentStudent = result.student;
 
     document.getElementById("studentName").textContent = currentStudent.name || "—";
